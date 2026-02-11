@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 var server = http.createServer(app);
@@ -10,7 +11,7 @@ var io = socketIo(server);
 // Middleware
 app.use(express.json());
 
-const DB="mongodb+srv://yraval112:yraval23@multiplayer-card-game.abhd14h.mongodb.net/card_game"
+const DB = process.env.MONGO_URI;
 
 mongoose.connect(DB).then(() => {
     console.log("Connected to MongoDB");

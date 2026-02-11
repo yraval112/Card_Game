@@ -11,8 +11,8 @@ public class NetworkClient : MonoBehaviour
 
     void Start()
     {
-        var uri = new Uri("http://192.168.1.64:3000");
-        socket = new SocketIOUnity(uri, new SocketIOOptions
+        var api = new Uri("http://192.168.1.64:3000");
+        socket = new SocketIOUnity(api, new SocketIOOptions
         {
             Query = new Dictionary<string, string>
             {
