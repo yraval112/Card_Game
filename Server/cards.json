@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Shield Bearer",
+    "cost": 2,
+    "power": 3,
+    "ability": { "type": "GainPoints", "value": 2 }
+  },
+  {
+    "id": 2,
+    "name": "Thief",
+    "cost": 1,
+    "power": 1,
+    "ability": { "type": "StealPoints", "value": 2 }
+  }
+]
