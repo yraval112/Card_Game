@@ -1,6 +1,4 @@
-using UnityEngine;
 using System;
-using UnityEngine;
 public class CardInstance
 {
     public CardData data;
@@ -22,6 +20,10 @@ public class CardInstance
     public int GetBasePower()
     {
         return data.power;
+    }
+    public void SetCardData(CardData cardData)
+    {
+        data = cardData;
     }
 }
 

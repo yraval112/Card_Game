@@ -1,6 +1,7 @@
 const Room = require("./models/Room");
 const { getCardById } = require("./cardConfig");
 const { resolveScore } = require("./scoreResolver");
+const { onTurnStart } = require("./turnManager");
 
 /**
  * ENTRY POINT
@@ -12,7 +13,7 @@ async function startRevealPhase(roomId, room, io) {
   const s1 = room.gameState.scores[p1];
   const s2 = room.gameState.scores[p2];
 
-  // Initiative rule
+  // Initiative rule - determined once  per turn
   room.gameState.initiativePlayer =
     s1 === s2
       ? (Math.random() > 0.5 ? p1 : p2)
@@ -21,7 +22,7 @@ async function startRevealPhase(roomId, room, io) {
   await room.save();
 
   const queue = buildRevealQueue(room);
-  revealNext(roomId, room, queue, io);
+  revealNext(roomId, queue, io);
 }
 
 /**
@@ -52,7 +53,10 @@ function buildRevealQueue(room) {
  * Reveal cards one-by-one
  * Resolve score AFTER each reveal
  */
-async function revealNext(roomId, room, queue, io) {
+async function revealNext(roomId, queue, io) {
+  // Fetch fresh room state from DB
+  const room = await Room.findOne({ roomId });
+  if (!room) return;
 
   // End reveal phase
   if (queue.length === 0) {
@@ -86,7 +90,7 @@ async function revealNext(roomId, room, queue, io) {
 
   // 5️⃣ Continue reveal sequence (delay for animation)
   setTimeout(() => {
-    revealNext(roomId, room, queue, io);
+    revealNext(roomId, queue, io);
   }, 1200);
 }
 
@@ -116,10 +120,8 @@ async function endTurn(roomId, room, io) {
 
   await room.save();
 
-  io.to(roomId).emit("message", {
-    action: "turnStart",
-    turn: room.turn
-  });
+  // Start next turn with drawn cards
+  await onTurnStart(roomId, io);
 }
 
 module.exports = { startRevealPhase };

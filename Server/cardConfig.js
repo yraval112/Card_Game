@@ -4,4 +4,8 @@ function getCardById(id) {
   return cards.find(c => c.id === id);
 }
 
-module.exports = { getCardById };
+function getAllCards() {
+  return cards;
+}
+
+module.exports = { getCardById, getAllCards };

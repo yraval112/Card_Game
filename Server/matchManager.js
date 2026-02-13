@@ -1,4 +1,5 @@
 const Room = require("./models/Room");
+const { initializeDecks, getTurnCost } = require("./deckManager");
 
 let waitingPlayer = null;
 
@@ -44,7 +45,10 @@ function createMatch(socket, io) {
 
   console.log(`Match created: ${roomId} - ${player1Name} (${player1Id}) vs ${player2Name} (${player2Id})`);
 
-  // Save room to MongoDB with player names
+  // Initialize decks
+  const playerDecks = initializeDecks(player1Id, player2Id);
+
+  // Save room to MongoDB with player names and decks
   const newRoom = new Room({
     roomId,
     players: [player1Id, player2Id],
@@ -56,10 +60,11 @@ function createMatch(socket, io) {
     maxPlayers: 2,
     gameState: {
       scores: { [player1Id]: 0, [player2Id]: 0 },
-      foldedCards: {},
-      endedTurn: {},
+      foldedCards: { [player1Id]: [], [player2Id]: [] },
+      endedTurn: { [player1Id]: false, [player2Id]: false },
       initiativePlayer: player1Id
     },
+    playerDecks: playerDecks,
     status: "playing"
   });
 
@@ -67,6 +72,7 @@ function createMatch(socket, io) {
     console.log(`Room ${roomId} saved to MongoDB (2/2 players)`);
   }).catch(err => console.error("Error saving room:", err));
 
+  // Send gameStart with initial 3 cards to both players
   io.to(roomId).emit("message", {
     action: "gameStart",
     roomId,
@@ -76,6 +82,21 @@ function createMatch(socket, io) {
       [player2Id]: player2Name
     },
     totalTurns: 6
+  });
+
+  // Send each player their initial hand
+  waitingPlayer.emit("message", {
+    action: "syncHand",
+    hand: playerDecks[player1Id].hand,
+    turnCost: getTurnCost(1),
+    turn: 1
+  });
+
+  socket.emit("message", {
+    action: "syncHand",
+    hand: playerDecks[player2Id].hand,
+    turnCost: getTurnCost(1),
+    turn: 1
   });
 
   waitingPlayer = null;

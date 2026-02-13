@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 const crypto = require("crypto");
 
 const { handleMatchmaking } = require("./matchManager");
-const { handleTurnEvents } = require("./turnManager");
+const { handleEndTurn, onTurnStart } = require("./turnManager");
 const Room = require("./models/Room");
 const Player = require("./models/Player");
 
@@ -79,7 +79,9 @@ io.on("connection", (socket) => {
   handleMatchmaking(io, socket);
 
   // Add turn event handlers
-  handleTurnEvents(io, socket);
+  socket.on("endTurn", (data) => {
+    handleEndTurn(data, io, socket);
+  });
 
   socket.on("joinRoom", async ({ roomId }) => {
     try {
@@ -185,6 +187,51 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Handle explicit player quit
+  socket.on("playerQuit", async () => {
+    console.log(`Player ${socket.id} quit the game`);
+
+    try {
+      // Find room with this player
+      const room = await Room.findOne({ players: socket.id });
+      
+      if (room) {
+        const otherPlayerId = room.players.find(p => p !== socket.id);
+        
+        // Immediately mark room as finished
+        room.status = "finished";
+        
+        // Award win to other player if they exist and game is still active
+        if (otherPlayerId && room.status !== "finished") {
+          room.gameState.scores[otherPlayerId] = 
+            (room.gameState.scores[otherPlayerId] || 0) + 1;
+        }
+        
+        await room.save();
+
+        // Notify other player
+        if (otherPlayerId) {
+          io.to(room.roomId).emit("message", {
+            action: "opponentQuit",
+            quitPlayer: socket.id,
+            message: "Opponent quit the game. You win by default!"
+          });
+        }
+
+        console.log(`Room ${room.roomId} closed - Player ${socket.id} quit`);
+      }
+
+      // Disconnect socket
+      socket.disconnect(true);
+    } catch (err) {
+      console.error("Error handling playerQuit:", err);
+      socket.emit("message", { 
+        action: "error", 
+        message: "Failed to quit game" 
+      });
+    }
+  });
+
   socket.on("disconnect", async () => {
     console.log(`Player disconnected: ${socket.id}`);
 
@@ -193,6 +240,13 @@ io.on("connection", (socket) => {
       const room = await Room.findOne({ players: socket.id });
       
       if (room) {
+        // If game is already finished, just clean up
+        if (room.status === "finished") {
+          console.log(`Room ${room.roomId} - Game already finished. Cleaning up after player ${socket.id}.`);
+          await Room.deleteOne({ _id: room._id });
+          return;
+        }
+
         const otherPlayerId = room.players.find(p => p !== socket.id);
         
         // Update room status to waiting for reconnection

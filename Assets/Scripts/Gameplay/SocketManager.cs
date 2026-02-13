@@ -16,7 +16,6 @@ public class GameSocketManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public async void Connect(string name)
@@ -26,7 +25,12 @@ public class GameSocketManager : MonoBehaviour
 
         socket.OnConnected += async (sender, e) =>
         {
-            Debug.Log("Connected to server");
+            Debug.Log("Connected to server with socket ID: " + socket.Id);
+
+            // Send player name to server
+            await socket.EmitAsync("setPlayerName", playerName);
+
+            // Find match
             await socket.EmitAsync("findMatch");
         };
 
@@ -43,6 +47,26 @@ public class GameSocketManager : MonoBehaviour
 
     public async void Send(string eventName, object data)
     {
-        await socket.EmitAsync(eventName, data);
+        if (socket != null && socket.Connected)
+        {
+            await socket.EmitAsync(eventName, data);
+        }
+        else
+        {
+            Debug.LogError("Socket not connected!");
+        }
+    }
+
+    public async void Disconnect()
+    {
+        if (socket != null && socket.Connected)
+        {
+            Debug.Log("Disconnecting from server...");
+            // Notify server that player is quitting
+            await socket.EmitAsync("playerQuit", new { reason = "Player quit game" });
+            // Disconnect socket
+            await socket.DisconnectAsync();
+        }
     }
 }
+

@@ -12,5 +12,75 @@
     "cost": 1,
     "power": 1,
     "ability": { "type": "StealPoints", "value": 2 }
+  },
+  {
+    "id": 3,
+    "name": "Champion",
+    "cost": 3,
+    "power": 4,
+    "ability": { "type": "DoublePower", "value": 0 }
+  },
+  {
+    "id": 4,
+    "name": "Scout",
+    "cost": 1,
+    "power": 2,
+    "ability": { "type": "GainPoints", "value": 1 }
+  },
+  {
+    "id": 5,
+    "name": "Assassin",
+    "cost": 2,
+    "power": 2,
+    "ability": { "type": "StealPoints", "value": 3 }
+  },
+  {
+    "id": 6,
+    "name": "Knight",
+    "cost": 3,
+    "power": 5,
+    "ability": { "type": "GainPoints", "value": 3 }
+  },
+  {
+    "id": 7,
+    "name": "Ranger",
+    "cost": 2,
+    "power": 3,
+    "ability": { "type": "DoublePower", "value": 0 }
+  },
+  {
+    "id": 8,
+    "name": "Mage",
+    "cost": 2,
+    "power": 2,
+    "ability": { "type": "GainPoints", "value": 4 }
+  },
+  {
+    "id": 9,
+    "name": "Rogue",
+    "cost": 1,
+    "power": 1,
+    "ability": { "type": "StealPoints", "value": 1 }
+  },
+  {
+    "id": 10,
+    "name": "Paladin",
+    "cost": 3,
+    "power": 4,
+    "ability": { "type": "GainPoints", "value": 2 }
+  },
+  {
+    "id": 11,
+    "name": "Barbarian",
+    "cost": 4,
+    "power": 6,
+    "ability": { "type": "DoublePower", "value": 0 }
+  },
+  {
+    "id": 12,
+    "name": "Cleric",
+    "cost": 2,
+    "power": 2,
+    "ability": { "type": "GainPoints", "value": 3 }
   }
 ]
