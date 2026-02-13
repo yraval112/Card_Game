@@ -58,7 +58,6 @@ public class HandUIManager : MonoBehaviour
             cardElements[card] = cardUIComponent;
         }
 
-        // Refresh layout
         if (layoutGroup != null)
             LayoutRebuilder.ForceRebuildLayoutImmediate(handContainer as RectTransform);
     }
@@ -83,7 +82,6 @@ public class HandUIManager : MonoBehaviour
     {
         if (cardElements.TryGetValue(card, out var element))
         {
-            // Move card UI from hand to played cards container
             if (playedCardsContainer != null)
             {
                 element.transform.SetParent(playedCardsContainer);
@@ -92,7 +90,6 @@ public class HandUIManager : MonoBehaviour
             }
         }
 
-        // Refresh both layouts
         if (layoutGroup != null)
             LayoutRebuilder.ForceRebuildLayoutImmediate(handContainer as RectTransform);
 
@@ -104,13 +101,11 @@ public class HandUIManager : MonoBehaviour
     {
         if (cardElements.TryGetValue(card, out var element))
         {
-            // Move card UI back from played to hand
             element.transform.SetParent(handContainer);
             element.UpdateSelection(false);
             Debug.Log($"Card returned to hand: {card.data.name}");
         }
 
-        // Refresh both layouts
         if (layoutGroup != null)
             LayoutRebuilder.ForceRebuildLayoutImmediate(handContainer as RectTransform);
 

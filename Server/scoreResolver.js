@@ -2,10 +2,8 @@ function resolveScore(card, playerId, room) {
   let score = room.gameState.scores[playerId];
   const opponent = room.players.find(p => p !== playerId);
 
-  // Base power
   score += card.power;
 
-  // Ability handling
   if (card.ability) {
     switch (card.ability.type) {
       case "GainPoints":
@@ -18,7 +16,7 @@ function resolveScore(card, playerId, room) {
         break;
 
       case "DoublePower":
-        score += card.power; // add power again
+        score += card.power; 
         break;
     }
   }

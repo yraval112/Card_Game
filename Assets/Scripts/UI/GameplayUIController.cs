@@ -128,7 +128,6 @@ public class GameplayUIController : MonoBehaviour
     {
         UpdateCostUI(DeckManager.Instance.AvailableCost);
 
-        // Disable end turn button if can't play more cards
         if (endTurnButton != null)
             endTurnButton.interactable = true;
     }

@@ -8,7 +8,6 @@ const Room = require("./models/Room");
     const players = await Player.find();
     const rooms = await Room.find();
     
-    console.log("\n========== MONGODB DATA ==========\n");
     
     console.log(`Total Players Connected: ${players.length}`);
     console.log("Players:");

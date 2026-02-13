@@ -6738,8 +6738,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SafeAreaDebugger
   logToConsole: 0
   drawGizmos: 0
-  safeAreaColor: {r: 0, g: 1, b: 0, a: 1}
-  unsafeAreaColor: {r: 1, g: 0, b: 0, a: 1}
+  safeAreaColor:
+    r: 0
+    g: 1
+    b: 0
+    a: 1
+  unsafeAreaColor:
+    r: 1
+    g: 0
+    b: 0
+    a: 1
+  safeAreaManager: {fileID: 0}
+  canvasRect: {fileID: 0}
+  lastLoggedSafeArea:
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!222 &7012270740850770588
 CanvasRenderer:
   m_ObjectHideFlags: 0
